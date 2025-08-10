@@ -8,7 +8,7 @@ import userRoutes from './routes/user.route.js';
 
 const app = express();
 
-//app configurations
+//app middleware configurations
 app.use(cors({
     origin: process.env.CORS_ORIGIN,
     credentials: true
