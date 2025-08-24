@@ -145,7 +145,11 @@ const loginUser = asyncHandler(async (req, res) => {
 const logOutUser = asyncHandler(async (req, res) => {
     await User.findByIdAndUpdate(
         req.user._id,
-        { $set: { refreshToken: null } },
+        {
+            $set: {
+                refreshToken: null
+            }
+        },
         { new: true }
     )
 
@@ -360,10 +364,11 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
 
 //function to get the user's watch history
 const getUserWatchHistory = asyncHandler(async (req, res) => {
+
     const user = await User.aggregate([
         {
             $match: {
-                _id: new mongoose.Types.ObjectId(req.user._id)
+                _id: req.user._id
             }
         },
         {
@@ -403,7 +408,7 @@ const getUserWatchHistory = asyncHandler(async (req, res) => {
     ])
 
     return res.status(200).json(
-        new ApiResponse(200, user[0].watchHistory, 'Watch history fetched successfully!')
+        new ApiResponse(200, user?.[0].watchHistory, 'Watch history fetched successfully!')
     )
 })
 
