@@ -27,7 +27,6 @@ const registerUser = asyncHandler(async (req, res) => {
 
     //step 1: get user details from frontend
     const { username, email, fullName, password } = req.body;
-    // console.log('User', req.body);
 
     //step 2: validate user details
     if ([fullName, username, email, password].some(field => field?.trim() === '')) {
@@ -42,12 +41,10 @@ const registerUser = asyncHandler(async (req, res) => {
         $or: [{ username }, { email }]
     })
     if (existingUser) {
-        console.log('Existing User', existingUser);
         throw new ApiError(409, 'User with username or email already exists!');
     }
 
     //step 4: check for images, avatar
-    // console.log('Local Files', req?.files);
     const avatarLocalPath = req?.files?.avatar[0]?.path;
 
     let coverImgLocalPath;
@@ -62,7 +59,6 @@ const registerUser = asyncHandler(async (req, res) => {
     //step 5: upload them to cloudinary
     const avatar = await uploadOnCloudinary(avatarLocalPath);
     const coverImage = await uploadOnCloudinary(coverImgLocalPath);
-    // console.log('Avatar', avatar);
 
     //step 6: check if avatar is successfully uploaded
     if (!avatar) {
@@ -354,8 +350,6 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     if (!channel?.length) {
         throw new ApiError(404, 'Channel does not exist!');
     }
-
-    console.log('Channel Details', channel);
 
     return res.status(200).json(
         new ApiResponse(200, channel[0], 'User channel fetched successfully!')
