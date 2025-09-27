@@ -7,8 +7,28 @@ import { asyncHandler } from "../utils/asyncHandler.js"
 
 
 const toggleSubscription = asyncHandler(async (req, res) => {
-    const { channelId } = req.params
-    // TODO: toggle subscription
+    const { channelId } = req.params;
+
+    if (!channelId) {
+        throw new ApiError(400, 'Channel Id is missing!');
+    }
+
+    if (!isValidObjectId(channelId)) {
+        throw new ApiError(400, 'Channel Id is invalid!');
+    }
+
+    const isSubscribed = await Subscription.findOneAndDelete({ channel: channelId, subscriber: req.user?._id });
+
+    if (isSubscribed) {
+        return res.status(200).json(
+            new ApiResponse(200, null, 'Channel unsubscribed successfully!')
+        )
+    } else {
+        await Subscription.create({ channel: channelId, subscriber: req.user?._id });
+        return res.status(200).json(
+            new ApiResponse(200, null, 'Channel subscribed successfully!')
+        )
+    }
 })
 
 // controller to return subscriber list of a channel
