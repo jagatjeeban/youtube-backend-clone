@@ -36,11 +36,20 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     //step 3: check if user already exists -> username, email
-    const existingUser = await User.findOne({
-        $or: [{ username }, { email }]
-    })
-    if (existingUser) {
-        throw new ApiError(409, 'User with username or email already exists!');
+    // const existingUser = await User.findOne({
+    //     $or: [{ username }, { email }]
+    // })
+    // if (existingUser) {
+    //     throw new ApiError(409, 'User with username or email already exists!');
+    // }
+    const existingUsername = await User.findOne({ username: username });
+    if (existingUsername) {
+        throw new ApiError(409, 'User with this username already exists!')
+    }
+
+    const existingEmail = await User.findOne({ email: email });
+    if (existingEmail) {
+        throw new ApiError(409, 'User with this email id already exists!')
     }
 
     //step 4: check for images, avatar
